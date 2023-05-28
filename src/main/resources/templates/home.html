@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Employee</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Id </th>
+        <th> Name </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${users.empty}">
+        <td colspan="2"> No Books Available </td>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td><span th:text="${user.id}"> Title </span></td>
+        <td><span th:text="${user.name}"> Author </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
