@@ -1,9 +1,7 @@
 package com.dshard.freespace.config;
 
-import com.mongodb.client.ListDatabasesIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
@@ -28,8 +26,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-        MongoClient client = MongoClients.create(uri);
-        return client;
+        return MongoClients.create(uri);
     }
 
     @Override

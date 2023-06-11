@@ -14,4 +14,5 @@ public class Blog {
     private String title;
     private String body;
     private String author;
+    private String access;
 }
