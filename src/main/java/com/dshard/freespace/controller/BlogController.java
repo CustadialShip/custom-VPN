@@ -5,11 +5,10 @@ import com.dshard.freespace.model.Blog;
 import com.dshard.freespace.model.User;
 import com.dshard.freespace.persistance.BlogRepository;
 import com.dshard.freespace.persistance.UserRepository;
+import com.dshard.freespace.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +30,9 @@ public class BlogController {
     private static final Integer DEFAULT_LIMIT = 10;
 
     private final BlogRepository blogRepository;
-
     private final UserRepository userRepository;
-
     private final AuthenticationService authenticationService;
+    private final BlogService blogService;
 
     @GetMapping("/u/{id}")
     private User getUserByUsername(@PathVariable String id) {
@@ -54,7 +52,7 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-    private Blog getBlogsById(@PathVariable String id) {
+    private Blog getBlogById(@PathVariable String id) {
         logger.info("getBlogsById");
         return blogRepository.findById(id).orElse(null);
     }
@@ -62,15 +60,18 @@ public class BlogController {
     @PostMapping
     private String saveBlog(@RequestBody Blog blog) {
         logger.info("saveBlog");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        blog.setAuthor(currentPrincipalName);
-        return blogRepository.save(blog).getId();
+        return blogService.saveBlog(blog, authenticationService.getPrincipalName()).getId();
     }
 
     @DeleteMapping("/{id}")
     private void deleteBlog(@PathVariable String id) {
         logger.info("deleteBlog");
-        blogRepository.deleteById(id);
+        blogService.deleteBlog(id, authenticationService.getPrincipalName());
+    }
+
+    @GetMapping("/isMy/{id}")
+    private boolean isUserHasBlog(@PathVariable String id) {
+        logger.info("getBlogsById");
+        return blogService.isUserHasBlog(id, authenticationService.getPrincipalName());
     }
 }

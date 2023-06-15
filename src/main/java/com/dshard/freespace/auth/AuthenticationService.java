@@ -31,6 +31,10 @@ public class AuthenticationService {
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.USER)
+                .comments(0L)
+                .blogs(0L)
+                .likes(0L)
+                .words(0L)
                 .build();
         userRepository.save(user);
 

@@ -25,6 +25,11 @@ public class User implements UserDetails {
     private String password;
     private Role role;
 
+    private Long words;
+    private Long blogs;
+    private Long comments;
+    private Long likes;
+
     @Override
     public String getPassword() {
         return password;
