@@ -2,6 +2,7 @@ package com.dshard.freespace.controller;
 
 import com.dshard.freespace.auth.AuthenticationService;
 import com.dshard.freespace.model.Blog;
+import com.dshard.freespace.model.ResponseBlogList;
 import com.dshard.freespace.model.User;
 import com.dshard.freespace.persistance.BlogRepository;
 import com.dshard.freespace.persistance.UserRepository;
@@ -9,10 +10,10 @@ import com.dshard.freespace.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/blogs")
 public class BlogController {
     Logger logger = LoggerFactory.getLogger(BlogController.class);
-    private static final Integer DEFAULT_LIMIT = 30;
 
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
@@ -33,20 +33,19 @@ public class BlogController {
     }
 
     @GetMapping
-    private List<Blog> getBlogs(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
-//        try {
-//            List<Blog> blogs = new ArrayList<Blog>();
-//            Pageable paging = PageRequest.of(page, size);
-//            Page<Blog> pageBlog;
-//            pageBlog = blogRepository.findAll();
-//        }
-        return blogRepository
-                .findAll().stream()
-                .filter(blog -> blog.getAccess().equals("public") ||
-                                blog.getAccess().equals("private") &&
-                                blog.getAuthor().equals(authenticationService.getPrincipalName()))
-                .limit(DEFAULT_LIMIT)
-                .collect(Collectors.toList());
+    private ResponseBlogList getBlogs(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
+        try {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Blog> pageBlogs = blogRepository.findAll(paging);
+            return ResponseBlogList.builder()
+                    .blogs(pageBlogs.getContent())
+                    .currentPage(pageBlogs.getNumber())
+                    .totalItems(pageBlogs.getTotalElements())
+                    .totalPage(pageBlogs.getTotalPages())
+                    .build();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @GetMapping("/{id}")
