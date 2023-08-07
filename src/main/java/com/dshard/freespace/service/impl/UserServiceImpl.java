@@ -1,5 +1,7 @@
 package com.dshard.freespace.service.impl;
 
+import com.dshard.freespace.model.RequestFormUser;
+import com.dshard.freespace.model.Role;
 import com.dshard.freespace.model.User;
 import com.dshard.freespace.persistance.UserRepository;
 import com.dshard.freespace.service.UserService;
@@ -21,8 +23,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User saveUser(User user) {
-        logger.info("Saved user {}", user.getUsername());
+    public User saveUser(RequestFormUser userForm) {
+        logger.info("Saved user {}", userForm.getUsername());
+        User user = User.builder()
+                .firstName(userForm.getFirstName())
+                .secondName(userForm.getSecondName())
+                .username(userForm.getUsername())
+                .password(userForm.getPassword())
+                .role(Role.USER)
+                .words(0L)
+                .blogs(0L)
+                .likes(0L)
+                .comments(0L)
+                .build();
         return userRepository.save(user);
     }
 

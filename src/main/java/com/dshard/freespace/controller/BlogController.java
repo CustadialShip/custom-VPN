@@ -3,9 +3,7 @@ package com.dshard.freespace.controller;
 import com.dshard.freespace.auth.AuthenticationService;
 import com.dshard.freespace.model.Blog;
 import com.dshard.freespace.model.ResponseBlogList;
-import com.dshard.freespace.model.User;
 import com.dshard.freespace.persistance.BlogRepository;
-import com.dshard.freespace.persistance.UserRepository;
 import com.dshard.freespace.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,19 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
-@RequestMapping("/blogs")
+@RequestMapping("/api/v1/blogs")
 public class BlogController {
     Logger logger = LoggerFactory.getLogger(BlogController.class);
 
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
     private final BlogService blogService;
-
-    @GetMapping("/u/{id}")
-    private User getUserByUsername(@PathVariable String id) {
-        return userRepository.findByUsername(id).get();
-    }
 
     @GetMapping
     private ResponseBlogList getBlogs(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
@@ -66,7 +58,7 @@ public class BlogController {
         blogService.deleteBlog(id, authenticationService.getPrincipalName());
     }
 
-    @GetMapping("/isMy/{id}")
+    @GetMapping("/{id}/me")
     private boolean isUserHasBlog(@PathVariable String id) {
         logger.info("getBlogsById");
         return blogService.isUserHasBlog(id, authenticationService.getPrincipalName());

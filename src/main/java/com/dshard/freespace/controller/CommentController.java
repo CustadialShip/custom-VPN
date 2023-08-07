@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
-@RequestMapping("/comments")
+@RequestMapping("/api/v1/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -21,7 +21,7 @@ public class CommentController {
     }
 
     @PostMapping
-    private String saveBlog(@RequestBody RequestFormComment form) {
+    private String saveComment(@RequestBody RequestFormComment form) {
         return commentService.saveComment(form.getBlogId(), form.getCommentMessage()).getId();
     }
 }
