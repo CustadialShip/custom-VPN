@@ -19,7 +19,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> getCommentByBlogId(String blogId) {
-        return commentRepository.findAllByBlogId(blogId);
+        return commentRepository.findAllByBlogIdOrderByPostedDesc(blogId);
     }
 
     @Override

@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends MongoRepository<Comment, String> {
 
-    List<Comment> findAllByBlogId(String username);
+    List<Comment> findAllByBlogIdOrderByPostedDesc(String username);
 
 }

@@ -1,6 +1,7 @@
 package com.dshard.freespace.service.impl;
 
 import com.dshard.freespace.model.Blog;
+import com.dshard.freespace.model.RequestFormBlog;
 import com.dshard.freespace.model.User;
 import com.dshard.freespace.persistance.BlogRepository;
 import com.dshard.freespace.persistance.UserRepository;
@@ -8,6 +9,8 @@ import com.dshard.freespace.service.BlogService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -17,9 +20,15 @@ public class BlogServiceImpl implements BlogService {
     private final UserRepository userRepository;
 
     @Override
-    public Blog saveBlog(Blog blog, String principalName) {
+    public Blog saveBlog(RequestFormBlog requestFormBlog, String principalName) {
         User currentUser = userRepository.findByUsername(principalName).orElseThrow();
-        blog.setAuthor(principalName);
+        Blog blog = Blog.builder()
+                .body(requestFormBlog.getBody())
+                .author(principalName)
+                .access(requestFormBlog.getAccess())
+                .title(requestFormBlog.getTitle())
+                .posted(LocalDateTime.now())
+                .build();
         Blog dbBlog = blogRepository.save(blog);
 
         currentUser.setWords(currentUser.getWords() + getWordNumber(dbBlog));

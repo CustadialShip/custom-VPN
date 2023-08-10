@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @Document("blogs")
 @Builder
@@ -15,4 +17,5 @@ public class Blog {
     private String body;
     private String author;
     private String access;
+    private LocalDateTime posted;
 }

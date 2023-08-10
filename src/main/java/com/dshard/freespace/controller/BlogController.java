@@ -2,6 +2,7 @@ package com.dshard.freespace.controller;
 
 import com.dshard.freespace.auth.AuthenticationService;
 import com.dshard.freespace.model.Blog;
+import com.dshard.freespace.model.RequestFormBlog;
 import com.dshard.freespace.model.ResponseBlogList;
 import com.dshard.freespace.persistance.BlogRepository;
 import com.dshard.freespace.service.BlogService;
@@ -25,9 +26,9 @@ public class BlogController {
     private final BlogService blogService;
 
     @GetMapping
-    private ResponseBlogList getBlogs(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
+    private ResponseBlogList getBlogs(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int size) {
         try {
-            Pageable paging = PageRequest.of(page, size);
+            Pageable paging = PageRequest.of(page - 1, size);
             Page<Blog> pageBlogs = blogRepository.findAll(paging);
             return ResponseBlogList.builder()
                     .blogs(pageBlogs.getContent())
@@ -47,9 +48,9 @@ public class BlogController {
     }
 
     @PostMapping
-    private String saveBlog(@RequestBody Blog blog) {
+    private String saveBlog(@RequestBody RequestFormBlog requestFormBlog) {
         logger.info("saveBlog");
-        return blogService.saveBlog(blog, authenticationService.getPrincipalName()).getId();
+        return blogService.saveBlog(requestFormBlog, authenticationService.getPrincipalName()).getId();
     }
 
     @DeleteMapping("/{id}")
