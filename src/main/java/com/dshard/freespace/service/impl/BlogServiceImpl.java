@@ -7,14 +7,25 @@ import com.dshard.freespace.persistance.BlogRepository;
 import com.dshard.freespace.persistance.UserRepository;
 import com.dshard.freespace.service.BlogService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class BlogServiceImpl implements BlogService {
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
@@ -62,5 +73,20 @@ public class BlogServiceImpl implements BlogService {
         Blog deletedBlog = blogRepository.findById(blogId).orElseThrow();
         return currentUser.getRole().toString().equals("ADMIN") ||
                 deletedBlog.getAuthor().equals(currentUser.getUsername());
+    }
+
+    @Override
+    public Page<Blog> getBlogsByUserAccessAndPagination(String principalName, Pageable pageable) {
+        Criteria criteria = new Criteria();
+        criteria.orOperator(Criteria.where("access").is("public"), Criteria.where("author").is(principalName));
+
+        Query query = new Query();
+        query.addCriteria(criteria);
+        long totalCount = mongoTemplate.count(query, Blog.class);
+
+        query.with(pageable);
+        List<Blog> result = mongoTemplate.find(query, Blog.class);
+
+        return new PageImpl<>(result, pageable, totalCount);
     }
 }

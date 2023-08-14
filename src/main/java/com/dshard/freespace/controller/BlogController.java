@@ -29,7 +29,8 @@ public class BlogController {
     private ResponseBlogList getBlogs(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int size) {
         try {
             Pageable paging = PageRequest.of(page - 1, size);
-            Page<Blog> pageBlogs = blogRepository.findAll(paging);
+            String currentPrincipalName = authenticationService.getPrincipalName();
+            Page<Blog> pageBlogs = blogService.getBlogsByUserAccessAndPagination(currentPrincipalName, paging);
             return ResponseBlogList.builder()
                     .blogs(pageBlogs.getContent())
                     .currentPage(pageBlogs.getNumber())
