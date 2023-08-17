@@ -9,6 +9,7 @@ import com.dshard.freespace.persistance.UserRepository;
 import com.dshard.freespace.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
+        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+            throw new BadCredentialsException("Username is already in use, try another one");
+        }
+
         User user = User.builder()
                 .firstName(registerRequest.getFirstName())
                 .lastName(registerRequest.getLastName())

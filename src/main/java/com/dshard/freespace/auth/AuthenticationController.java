@@ -24,7 +24,7 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(authenticationService.register(registerRequest));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already in use");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in use, try another one");
         }
     }
 
@@ -36,7 +36,6 @@ public class AuthenticationController {
     @GetMapping("/me")
     public User getMe() {
         String currentPrincipalName = authenticationService.getPrincipalName();
-        System.out.println(userRepository.findByUsername(currentPrincipalName).orElseThrow());
         return userRepository.findByUsername(currentPrincipalName).orElseThrow();
     }
 }
