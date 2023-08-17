@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class RequestFormUser {
     private String firstName;
-    private String secondName;
+    private String lastName;
     private String username;
     private String password;
 }

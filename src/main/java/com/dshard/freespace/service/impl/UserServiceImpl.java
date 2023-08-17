@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Saved user {}", userForm.getUsername());
         User user = User.builder()
                 .firstName(userForm.getFirstName())
-                .secondName(userForm.getSecondName())
+                .lastName(userForm.getLastName())
                 .username(userForm.getUsername())
                 .password(userForm.getPassword())
                 .role(Role.USER)
@@ -50,7 +49,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Get users with limit {}", limit);
         return userRepository.findAll().stream()
                 .limit(limit)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }
